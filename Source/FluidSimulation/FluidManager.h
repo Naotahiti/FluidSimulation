@@ -5,65 +5,108 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/InstancedStaticMeshComponent.h"
-#include "Particle.h"
+#include "Components/BoxComponent.h"
 #include "FluidManager.generated.h"
 
-UENUM(BlueprintType)
+UENUM(BlueprintType) // pas intégré
 enum class EFluidType : uint8
 {
 	Water UMETA(DisplayName = "Water"),
 	Oil UMETA(DisplayName = "Oil")
 };
+USTRUCT()
+struct FFluidParticle
+{
+    GENERATED_BODY()
+
+    FVector Position;
+    FVector PreviousPosition;
+    FVector Velocity;
+
+    float Density = 0.f;
+    float Pressure = 0.f;
+};
 
 UCLASS()
 class FLUIDSIMULATION_API AFluidManager : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AFluidManager();
+    GENERATED_BODY()
+
+public:
+    AFluidManager();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
+public:
+    virtual void Tick(float DeltaTime) override;
 
+    void SpawnParticles();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    void Simulate(float DeltaTime);
 
-	void spawnparticles();
+    void BuildSpatialGrid();
 
-	TArray<int> chunks;
+    void SolveFluid();
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	int numofparticles = 1000;
+    void SolveBoundsCollision(FFluidParticle& P);
 
-	UPROPERTY(EditAnywhere,Category = "fluid")
-	EFluidType fluid_type;
+    void SolveParticleCollisions();
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	float distance; //between particles and their neighbors at spawn
+    void UpdateRender();
 
-	UPROPERTY(EditAnywhere , Category = "fluid")
-	float waterdensity;
+    float SmoothingKernel(float Radius, float Distance);
 
-	UPROPERTY(EditAnywhere , Category = "fluid")
-	float oildensity;
+    FVector CalculatePressureForce(int ParticleIndex);
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	int gridX;
+    FVector CalculateViscosityForce(int ParticleIndex);
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	int gridY;
+    FIntVector GetGridCell(const FVector& Position) const;
 
-	FVector managerpos; // actor's position
+public:
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	UInstancedStaticMeshComponent* ism;
+    UPROPERTY(VisibleAnywhere)
+    UBoxComponent* BoundsBox;
 
-	TArray <Particle*> particles;
+    UPROPERTY(VisibleAnywhere)
+    UInstancedStaticMeshComponent* ISM;
 
+  
+
+    //UPROPERTY(EditAnywhere, Category = "Fluid")
+    //int NumX = 50;
+
+    //UPROPERTY(EditAnywhere, Category = "Fluid")
+    //int NumZ = 50;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    int numtospawn;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float Spacing = 15.f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float ParticleRadius = 10.f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float InteractionRadius = 25.f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float RestDensity = 1.f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float PressureMultiplier = 300.f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    float ViscosityStrength = 0.15f;
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    FVector Gravity = FVector(0.f, 0.f, -980.f);
+
+    UPROPERTY(EditAnywhere, Category = "Fluid")
+    int SolverIterations = 4;
+
+    TArray<FFluidParticle> Particles;
+
+    TMap<FIntVector, TArray<int>> SpatialGrid;
 };
