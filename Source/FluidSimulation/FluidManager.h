@@ -4,9 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PaperSpriteComponent.h"
-#include "PaperSprite.h"
+#include "Components/InstancedStaticMeshComponent.h"
+#include "Particle.h"
 #include "FluidManager.generated.h"
+
+UENUM(BlueprintType)
+enum class EFluidType : uint8
+{
+	Water UMETA(DisplayName = "Water"),
+	Oil UMETA(DisplayName = "Oil")
+};
 
 UCLASS()
 class FLUIDSIMULATION_API AFluidManager : public AActor
@@ -35,14 +42,28 @@ public:
 	int numofparticles = 1000;
 
 	UPROPERTY(EditAnywhere,Category = "fluid")
-	bool iswater;
+	EFluidType fluid_type;
 
 	UPROPERTY(EditAnywhere, Category = "fluid")
 	float distance; //between particles and their neighbors at spawn
 
-	UPROPERTY(EditAnywhere, Category = "fluid")
-	TSubclassOf<UPaperSpriteComponent> SpriteComponentClass;
+	UPROPERTY(EditAnywhere , Category = "fluid")
+	float waterdensity;
 
-	TArray<UPaperSprite*> spritelist;
+	UPROPERTY(EditAnywhere , Category = "fluid")
+	float oildensity;
+
+	UPROPERTY(EditAnywhere, Category = "fluid")
+	int gridX;
+
+	UPROPERTY(EditAnywhere, Category = "fluid")
+	int gridY;
+
+	FVector managerpos; // actor's position
+
+	UPROPERTY(EditAnywhere, Category = "fluid")
+	UInstancedStaticMeshComponent* ism;
+
+	TArray <Particle*> particles;
 
 };
