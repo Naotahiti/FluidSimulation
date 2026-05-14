@@ -57,9 +57,15 @@ public:
 
     float SmoothingKernel(float Radius, float Distance);
 
-    FVector CalculatePressureForce(int ParticleIndex);
+    void CalculateDensity(); // visco
 
-    FVector CalculateViscosityForce(int ParticleIndex);
+    void CalculatePressure();
+
+    void ApplySPHForces(float DeltaTime);
+
+    /*FVector CalculatePressureForce(int ParticleIndex);
+
+    FVector CalculateViscosityForce(int ParticleIndex);*/
 
     FIntVector GetGridCell(const FVector& Position) const;
 
@@ -71,39 +77,31 @@ public:
     UPROPERTY(VisibleAnywhere)
     UInstancedStaticMeshComponent* ISM;
 
-  
-
-    //UPROPERTY(EditAnywhere, Category = "Fluid")
-    //int NumX = 50;
-
-    //UPROPERTY(EditAnywhere, Category = "Fluid")
-    //int NumZ = 50;
-
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     int numtospawn;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     float Spacing = 15.f;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
-    float ParticleRadius = 10.f;
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
+    FVector ParticleRadius;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     float InteractionRadius = 25.f;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     float RestDensity = 1.f;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     float PressureMultiplier = 300.f;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     float ViscosityStrength = 0.15f;
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
-    FVector Gravity = FVector(0.f, 0.f, -980.f);
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
+    FVector Gravity = FVector(0.f, 0.f, -10.f);
 
-    UPROPERTY(EditAnywhere, Category = "Fluid")
+    UPROPERTY(EditAnywhere, Category = "CustomFluid")
     int SolverIterations = 4;
 
     TArray<FFluidParticle> Particles;
