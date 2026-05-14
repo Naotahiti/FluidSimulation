@@ -189,7 +189,7 @@ void AFluidManager::ApplySPHForces(float DeltaTime)
         P.Velocity =
             P.Velocity.GetClampedToMaxSize(500.f);
 
-        // intégration
+        
         P.Position += P.Velocity * DeltaTime;
     }
 }

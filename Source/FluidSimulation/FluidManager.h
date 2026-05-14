@@ -8,6 +8,8 @@
 #include "Components/BoxComponent.h"
 #include "FluidManager.generated.h"
 
+
+
 UENUM(BlueprintType) // pas intégré
 enum class EFluidType : uint8
 {
@@ -26,8 +28,8 @@ struct FFluidParticle
     float Density = 0.f;
     float Pressure = 0.f;
 };
-
-UCLASS()
+UCLASS(PrioritizeCategories = "CustomFluid")
+//UCLASS()
 class FLUIDSIMULATION_API AFluidManager : public AActor
 {
     GENERATED_BODY()
@@ -45,10 +47,6 @@ public:
 
     void Simulate(float DeltaTime);
 
-    void BuildSpatialGrid();
-
-    void SolveFluid();
-
     void SolveBoundsCollision(FFluidParticle& P);
 
     void SolveParticleCollisions();
@@ -63,11 +61,7 @@ public:
 
     void ApplySPHForces(float DeltaTime);
 
-    /*FVector CalculatePressureForce(int ParticleIndex);
-
-    FVector CalculateViscosityForce(int ParticleIndex);*/
-
-    FIntVector GetGridCell(const FVector& Position) const;
+ 
 
 public:
 
